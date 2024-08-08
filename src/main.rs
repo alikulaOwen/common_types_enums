@@ -1,6 +1,50 @@
 //create an enum to classify web events
 
 use crate::List::*;
+use std::convert::{From, Into, TryFrom};
+use std::fmt;
+
+struct Circle{
+    radius: i32
+}
+
+impl fmt::Display for Circle{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Cirle of radius{}", self.radius)
+    }
+}
+
+
+#[derive(Debug)]
+struct Num{
+    value: i32,
+}
+impl From<i32> for Num{
+    fn from(item: i32)-> Self{
+        Num{value: item}
+    }
+}
+
+struct Even{
+    value: i32
+}
+
+impl TryFrom<i32> for Even{
+    type Error = &'static str;
+
+    fn try_from(value: i32) -> Result<Self, Self::Error> {
+        if value % 2 == 0{
+            Ok(Even{value})
+
+        }else {
+            Err("Number is not Even")
+        }
+    }
+
+}
+
+
+
 
 enum List{
     // Cons: Tuple struct that wraps an element and a pointer to the next node
@@ -8,6 +52,7 @@ enum List{
     // Nil: A node that signifies the end of the linked list
     Nil,
 }
+
 
 impl List{
     //c reats new empty list
@@ -200,7 +245,53 @@ fn main() {
     let seconds: Second = 10 as u64;
     let metres: Distance = 200 as u64;
 
-    println!("{} seconds and {} metres", seconds, metres)
+    println!("{} seconds and {} metres", seconds, metres);
 
+     //from `CONVERSION`
+     let numbers = Num::from(35);
+     let num: Num = 45.into();
+     println!("My number is {:?}", numbers.value);
+     println!("My number into {:?}", num.value);
 
+     //TryFrom
+
+     let num = 42;
+      let even_number = Even::try_from(num);
+
+      match even_number{
+        Ok(n)=> println!("Converted to Even: {:?}", n.value),
+        Err(e)=> println!("Failed to convert: {}", e),
+      }
+
+      // TryFrom
+
+    // assert_eq!(Even::try_from(8), Ok(Even(8)));
+    // assert_eq!(Even::try_from(5), Err(()));
+
+    // // TryInto
+
+    // let result: Result<Even, ()> = 8i32.try_into();
+    // assert_eq!(result, Ok(Even(8)));
+    // let result: Result<Even, ()> = 5i32.try_into();
+    // assert_eq!(result, Err(()));
+
+    // // TryFrom
+    // assert_eq!(Even::try_from(8), Ok(Even(8)));
+    // assert_eq!(Even::try_from(5), Err("Value is not even"));
+
+    // // TryInto
+    // let result: Result<Even, _> = 8i32.try_into();
+    // assert_eq!(result, Ok(Even(8)));
+    // let result: Result<Even, _> = 5i32.try_into();
+    // assert_eq!(result, Err("Value is not even"));
+    
+
+    let circle = Circle{ radius: 6};
+    println!("{}", circle.to_string());
+
+    let parsed: i32 = "5".parse().unwrap();
+    let turbo_parsed = "10".parse::<i32>().unwrap();
+
+    let sum = parsed + turbo_parsed;
+    println!("Sum: {:?}", sum);
 }
